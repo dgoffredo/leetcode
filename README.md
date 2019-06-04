@@ -12,4 +12,4 @@ What
 ----
 Each subdirectory shares the name of a LeetCode problem. For example,
 [median-of-two-sorted-arrays](median-of-two-sorted-arrays) is the problem
-[http://leetcode.com/problems/median-of-two-sorted-arrays/](leetcode.com/problems/median-of-two-sorted-arrays/).
+[leetcode.com/problems/median-of-two-sorted-arrays/](http://leetcode.com/problems/median-of-two-sorted-arrays/).
