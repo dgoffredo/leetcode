@@ -151,12 +151,27 @@ int largestFullRectangle(const std::vector<std::vector<char>>& matrix)
 
     for (int jTopLeft = 0; jTopLeft < numColumns; ++jTopLeft) {
         for (int iTopLeft = 0; iTopLeft < numRows; ++iTopLeft) {
+            if (!isOccupied(iTopLeft, jTopLeft)) {
+                // If the top left is a zero, then no such rectangle will help.
+                continue;
+            }
+            
+            int jBottomEnd = numColumns;
+            int iBottomEnd = numRows;
             for (int jBottomRight = jTopLeft;
-                 jBottomRight < numColumns;
+                 jBottomRight < jBottomEnd;
                  ++jBottomRight) {
                 for (int iBottomRight = iTopLeft;
-                     iBottomRight < numRows;
+                     iBottomRight < iBottomEnd;
                      ++iBottomRight) {
+                    if (!isOccupied(iBottomRight, jBottomRight)) {
+                        // If the bottom right is a zero, then no such
+                        // rectangle will help. In addition, nor will any that
+                        // contains this cell.
+                        iBottomEnd = iBottomRight;
+                        continue;
+                    }
+
                     const int width  = jBottomRight - jTopLeft + 1;
                     const int height = iBottomRight - iTopLeft + 1;
                     const int area   = width * height;
