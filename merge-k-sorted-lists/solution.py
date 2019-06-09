@@ -1,4 +1,5 @@
 
+import heapq
 from typing import List
 
 
@@ -18,12 +19,11 @@ def merge(lists):
     result = None
     last = None
 
-    while True:
-        selection = smallest(lists)
-        if selection is None:
-            break
+    heap = [(node.val, i) for i, node in enumerate(lists) if node]
+    heapq.heapify(heap)
 
-        value, i = selection
+    while heap:
+        value, i = heapq.heappop(heap)
 
         # Create a new node and add it to the end of our answer.
         new_last = ListNode(value)
@@ -33,16 +33,11 @@ def merge(lists):
         if result is None:
             result = last
 
-        # "Increment" the corresponding list.
+        # "Increment" the corresponding list, and add the next value to the
+        # heap.
         lists[i] = lists[i].next
+        if lists[i] is not None:
+            heapq.heappush(heap, (lists[i].val, i))
 
     return result
         
-
-    
-def smallest(lists):
-    options = [(item.val, i) for i, item in enumerate(lists) if item]
-    if len(options) == 0:
-        return None
-    else:
-        return min(options)
