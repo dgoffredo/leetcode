@@ -75,7 +75,7 @@ def largest_colinear_subset_size(points):
     """
 
     # First, an edge case:
-    if len(points) < 2:
+    if len(points) <= 2:
         return len(points)
 
     line_counts = Counter()
@@ -84,11 +84,17 @@ def largest_colinear_subset_size(points):
     # worry about (p2, p1) because we arrange things so that p1 always comes
     # before p2 in the input.
     for i in range(len(points)):
+        equations_encountered = []
+        duplicity = 1
         for j in range (i + 1, len(points)):
-            # TODO: This "skip it" logic might not be correct depending on how
-            #       duplicate points are expected to be counted.
-            if points[i] != points[j]:
-                line_counts[linear_equation(points[i], points[j])] += 1
+            if points[i] == points[j]:
+                duplicity += 1
+            else:
+                equation = linear_equation(points[i], points[j])
+                equations_encountered.append(equation)
+
+        for equation in equations_encountered:
+            line_counts[equation] += duplicity
 
     high_score = largest_count(line_counts)
 
