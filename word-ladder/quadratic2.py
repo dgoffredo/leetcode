@@ -10,8 +10,8 @@ class Solution:
         return distance(beginWord, endWord, wordList)
 
 
-def without(string, i):
-    return string[:i] + string[i+1:]
+def differ_by_one(left, right):
+    return sum(a == b for a, b in zip(left, right)) == len(left) - 1
 
 
 def neighbors_graph(words):
@@ -21,7 +21,7 @@ def neighbors_graph(words):
     for word in words:
         for other in words - set(word):
             for i in range(len(word)):
-                if without(word, i) == without(other, i):
+                if differ_by_one(word, other):
                     graph[word].add(other)
                     graph[other].add(word)
 
