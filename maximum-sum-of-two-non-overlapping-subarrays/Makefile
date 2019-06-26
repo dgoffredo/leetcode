@@ -1,7 +1,7 @@
 .PHONY: run
 
-run: quadratic input
-	./quadratic <input
+run: linear input
+	./linear <input
 
-quadratic: quadratic.cpp driver.cpp
-	g++ -o quadratic driver.cpp
+linear: linear.cpp driver.cpp
+	g++ -fsanitize=address -o linear driver.cpp
