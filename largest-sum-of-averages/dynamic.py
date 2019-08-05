@@ -24,7 +24,7 @@ def largest_sum_of_averages(numbers, num_pieces):
             # print(f'({i}, {j}, {k}) -> {total(i, j) / (j - i + 1)}')
             return total(i, j) / (j - i + 1)
 
-        # Otherwise, break it it half in every possible way.  Either side will
+        # Otherwise, break it in half in every possible way.  Either side will
         # recur into 1 piece, while the other will recur into `k - 1` pieces.
         # Take the max possible out of all of these.  `m` is for "middle,"
         # with the convention that the cut is between index `m - 1` and `m`.
@@ -37,11 +37,10 @@ def largest_sum_of_averages(numbers, num_pieces):
             if combo > max_found:
                 max_found = combo
 
-        for m in range(i + k, j + 1):
-            # print(f'({i}, {m - 1}, {k - 1}) + ({m}, {j}, 1)')
-            combo = recur(i, m - 1, k - 1) + recur(m, j, 1)
-            if combo > max_found:
-                max_found = combo
+        # for m in range(i + k, j + 1):
+        #     combo = recur(i, m - 1, k - 1) + recur(m, j, 1)
+        #     if combo > max_found:
+        #         max_found = combo
 
         # print(f'({i}, {j}, {k}) -> {max_found}')
         return max_found
