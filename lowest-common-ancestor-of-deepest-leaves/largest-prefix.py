@@ -7,7 +7,7 @@
 
 class Solution:
     def lcaDeepestLeaves(self, root: 'TreeNode') -> 'TreeNode':
-        lowest_common_ancestor_of_deepest_leaves(root)
+        return lowest_common_ancestor_of_deepest_leaves(root)
 
 
 def lowest_common_ancestor_of_deepest_leaves(root):
@@ -21,9 +21,6 @@ def lowest_common_ancestor_of_deepest_leaves(root):
 
     def visit(node, path):
         nonlocal greatest_depth
-
-        print('visiting', path, 'and currently greatest_depth = ',
-              greatest_depth, 'and lowest_paths =', lowest_paths)
 
         if node.left is None and node.right is None:
             depth = len(path)
