@@ -10,7 +10,10 @@ def shortest_substring_containing_chars(string, chars):
     if len(string) == 0:
         return ''
 
-    charset = set(chars)
+    thresholds = defaultdict(int)  # letter in chars -> count in chars
+    for ch in chars:
+        thresholds[ch] += 1
+
     counts = defaultdict(int)  # letter in chars -> count in current substring
     num_contained = 0  # how many of `chars` are in the current substring
 
@@ -22,31 +25,31 @@ def shortest_substring_containing_chars(string, chars):
     def remove(ch):
         nonlocal num_contained
 
-        if ch not in charset:
+        threshold = thresholds.get(ch)
+
+        if threshold is None:
             return
    
         counts[ch] -= 1
-        if counts[ch] == 0:
+        if counts[ch] == threshold - 1:
             num_contained -= 1
 
     def add(ch):
         nonlocal num_contained
 
-        if ch not in charset:
+        threshold = thresholds.get(ch)
+
+        if threshold is None:
             return
 
         counts[ch] += 1
-        if counts[ch] == 1:
+        if counts[ch] == threshold:
             num_contained += 1
         
     add(string[0])
 
     while True:
-        # print('looking at', (i, j), '->', string[i:j])
-        # print('    num_contained ?= len(charset) ->',
-        #       num_contained == len(charset))
-
-        if num_contained == len(charset):
+        if num_contained == len(thresholds):
             # Maybe found a new candidate.
             if shortest is None or j - i < shortest[1] - shortest[0]:
                 shortest = i, j
