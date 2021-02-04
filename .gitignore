@@ -1,4 +1,5 @@
 **/solution
 **/__pycache__
 **/a.out
+**/*.o
 /.vscode
