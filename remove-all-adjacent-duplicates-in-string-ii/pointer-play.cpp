@@ -4,7 +4,7 @@
 
 using namespace std;
 
-string remove_duplicates(string input, int run_length);
+string remove_duplicates(string input, short run_length);
 
 class Solution {
 public:
@@ -13,10 +13,10 @@ public:
     }
 };
 
-string remove_duplicates(string input, int run_length) {
+string remove_duplicates(string input, short run_length) {
   struct Run {
     char letter;
-    int count;
+    short count;
   };
   vector<Run> runs;
 
