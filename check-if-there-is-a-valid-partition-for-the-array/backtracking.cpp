@@ -1,3 +1,5 @@
+// Way too slow. This is factorial or something.
+
 // #define DEBUGGING
 
 #ifdef DEBUGGING
