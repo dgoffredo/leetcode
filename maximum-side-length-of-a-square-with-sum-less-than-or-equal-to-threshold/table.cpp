@@ -11,7 +11,8 @@ public:
       int L = 0;
       // t[r][c] is the sum of the rectangle whose upper left corner is at
       // row=0 column=0 and whose bottom right corner is at row=r column=c.
-      vector<vector<int>> t(R, vector<int>(C));
+      // We can reuse the storage of m because of the way we calculate t.
+      vector<vector<int>>& t = m;
 
       // m_at is a wrapper around m that also might increase L from 0 to 1.
       // This allows us to cover the side-length-one case as we fill out t.
