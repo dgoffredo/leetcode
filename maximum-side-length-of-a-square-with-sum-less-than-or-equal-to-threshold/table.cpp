@@ -61,7 +61,8 @@ public:
         return t_at(r+x, c+x) - t_at(r+x, c-1) - t_at(r-1, c+x) + t_at(r-1, c-1);
       };
 
-      // See how big L can get.
+      // See how big L can get. Move the top left corner of the square along
+      // the grid, trying to increase the side length when possible.
       for (int r = 0; r + L - 1 < R; ++r) {
         for (int c = 0; c + L - 1 < C; ++c) {
           while (square(r, c, L) <= threshold && r+L < R && c+L < C && square(r, c, L+1) <= threshold) {
