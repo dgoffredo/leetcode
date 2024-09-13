@@ -1,89 +1,79 @@
-#include <algorithm>
-#include <cassert>
-#include <queue>
+#include <memory>
 #include <vector>
 
 int num_steps_to_connect(int num_vertices, std::vector<std::vector<int>>& edges) {
-  std::vector<int> vertex2component(num_vertices, -1);
   struct Component {
     int num_vertices;
     int num_edges;
+    Component *parent;
   };
-  std::vector<Component> components;
-
-  // Sort by the (min, max) vertex mentioned in either edge, lexicographically.
-  // This way we never have to merge components.
-  std::sort(edges.begin(), edges.end(), [](const std::vector<int>& left, const std::vector<int>& right) {
-    const int left_sorted[] = {std::min(left[0], left[1]), std::max(left[0], left[1])};
-    const int right_sorted[] = {std::min(right[0], right[1]), std::max(right[0], right[1])};
-    return std::lexicographical_compare(std::begin(left_sorted), std::end(left_sorted), std::begin(right_sorted), std::end(right_sorted));
-  });
+  std::vector<std::unique_ptr<Component>> components;
+  std::vector<Component*> vertex2component(num_vertices);
 
   for (const std::vector<int>& edge : edges) {
     const int from = edge[0];
     const int to = edge[1];
-    if (vertex2component[from] == -1 && vertex2component[to] == -1) {
-      components.push_back(Component{.num_vertices = 2, .num_edges = 1});
-      vertex2component[from] = vertex2component[to] = components.size() - 1;
-    } else if (vertex2component[from] == -1 || vertex2component[to] == -1) {
-      const int component = vertex2component[from] = vertex2component[to] = std::max(vertex2component[from], vertex2component[to]);
-      components[component].num_edges += 1;
-      components[component].num_vertices += 1;
+    if (!vertex2component[from] && !vertex2component[to]) {
+      components.emplace_back(new Component{.num_vertices = 2, .num_edges = 1, .parent = nullptr});
+      vertex2component[from] = vertex2component[to] = components.back().get();
+    } else if (!vertex2component[from] || !vertex2component[to]) {
+      Component *component = vertex2component[from] = vertex2component[to] = std::max(vertex2component[from], vertex2component[to]);
+      component->num_edges += 1;
+      component->num_vertices += 1;
     } else {
-      // We wouldn't have different components, because due to the edge sorting
-      // we would have seen the connecting edge before any edges to
-      // yet unencountered nodes.
-      assert(vertex2component[from] == vertex2component[to]);
-      components[vertex2component[from]].num_edges += 1;
+      Component *from_root = vertex2component[from];
+      while (from_root->parent) {
+        from_root = from_root->parent;
+      }
+      Component *to_root = vertex2component[to];
+      while (to_root->parent) {
+        to_root = to_root->parent;
+      }
+
+      if (from_root == to_root) {
+        from_root->num_edges += 1;
+      } else {
+        // Combine them.
+        components.emplace_back(new Component{
+          .num_vertices = from_root->num_vertices + to_root->num_vertices,
+          .num_edges = from_root->num_edges + to_root->num_edges + 1,
+          .parent = nullptr
+        });
+        vertex2component[from] = vertex2component[to] = from_root->parent = to_root->parent = components.back().get();
+      }
     }
   }
 
-  for (int &component : vertex2component) {
-    if (component != -1) {
-      continue;
-    }
-    // Isolated vertex. It's in its own component.
-    components.push_back(Component{.num_vertices = 1, .num_edges = 0});
-    component = components.size() - 1;
+  // If I have read the problem correctly, then there is exactly one
+  // connected component in `components`.
+  //
+  // This means that we can take any component from `components`, find its
+  // root, and then take that to be the one component.
+  //
+  // Then consider the `n - num_vertices` extra vertices. We need one edge per
+  // one of those to totally connect the graph. The connected component needs
+  // at least `num_vertices - 1` edges to remain connected, so the answer is:
+  //
+  // - `-1` ("impossible") if `num_edges - (n - num_vertices) < num_vertices - 1`
+  // - `n - num_vertices` (the number of edges to move, one for each extra vertex) otherwise
+  //
+  // Here's a simplification of the "impossible" condition:
+  //
+  // `num_edges - (n - num_vertices) < num_vertices - 1`
+  // `num_edges - n + num_vertices < num_vertices - 1`
+  // `num_edges - n < -1`
+  // `num_edges < n + 1`.
+  if (components.empty()) {
+    return -1;
   }
-
-  // Make a max-heap of components on `num_edges - num_vertices`. If `num_edges
-  // - num_vertices` is greater than -1, then we can combine the component with
-  // the next.  If the difference is less than or equal to -1, then there's no
-  // edge we can use to connect the component to another without breaking up
-  // the component, so we return that a solution is impossible (`return -1`).
-
-  // We could use `std::make_heap` on `components` to save memory, but the
-  // interface of `std::priority_queue` is nicer, so I'll copy all of the data
-  // instead.
-  struct ByEdgeVertexDifference {
-    bool operator()(const Component& left, const Component& right) const {
-      return (left.num_edges - left.num_vertices) < (right.num_edges - right.num_vertices);
-    }
-  };
-  std::priority_queue<Component, std::vector<Component>, ByEdgeVertexDifference> heap;
-  for (const Component& component : components) {
-    heap.push(component);
+  Component *root = components[0].get();
+  while (root->parent) {
+    root = root->parent;
   }
-
-  int num_moves = 0;
-  for (; heap.size() > 1; ++num_moves) {
-    const Component donor = heap.top();
-    heap.pop();
-    const Component receiver = heap.top();
-    heap.pop();
-    if (donor.num_edges - donor.num_vertices <= -1) {
-      // Not enough edges to donate.
-      return -1;
-    }
-
-    heap.push(Component{
-      .num_vertices = donor.num_vertices + receiver.num_vertices,
-      .num_edges = donor.num_edges + receiver.num_edges
-    });
+  if (root->num_edges < num_vertices + 1) {
+    return -1;
   }
-
-  return num_moves;
+  return num_vertices - root->num_vertices;
 }
 
 class Solution {
