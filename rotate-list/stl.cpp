@@ -1,6 +1,6 @@
 #include <algorithm>
+#include <forward_list>
 #include <iterator>
-#include <list>
 
 // leetcode.com boilerplate
 #ifdef WITH_LISTNODE
@@ -11,9 +11,9 @@ struct ListNode {
 };
 #endif
 
-std::list<int> node2list(const ListNode* head);
+std::forward_list<int> node2list(const ListNode* head);
 
-ListNode* list2node(const std::list<int>& values);
+ListNode* list2node(const std::forward_list<int>& values);
 
 class Solution {
 public:
@@ -22,7 +22,7 @@ public:
             return head;
         }
 
-        std::list<int> values = node2list(head);
+        std::forward_list<int> values = node2list(head);
 
         // A rotation `k` to the right is the same as a rotation `n - k` to the
         // left, where `n` is the length of the list.
@@ -35,8 +35,8 @@ public:
     }
 };
 
-std::list<int> node2list(const ListNode* head) {
-    std::list<int> values;
+std::forward_list<int> node2list(const ListNode* head) {
+    std::forward_list<int> values;
 
     while (head) {
         values.push_back(head->val);
@@ -46,7 +46,7 @@ std::list<int> node2list(const ListNode* head) {
     return values;
 }
 
-ListNode* list2node(const std::list<int>& values) {
+ListNode* list2node(const std::forward_list<int>& values) {
     if (values.empty()) {
         return nullptr;
     }
