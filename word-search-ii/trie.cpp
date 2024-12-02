@@ -11,10 +11,6 @@ bool is_lower(char letter) {
     return letter >= 'a' && letter <= 'z';
 }
 
-bool is_upper(char letter) {
-    return letter >= 'A' && letter <= 'Z';
-}
-
 // The need for these wrappers is one of the dumbest things about C++.
 
 char to_upper(unsigned char letter) {
