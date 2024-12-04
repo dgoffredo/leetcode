@@ -32,9 +32,9 @@ def linear_slope(p1, p2):
     dy = y2 - y1
     dx = x2 - x1
 
-    # A potention bug would be the assumption that all lines can be expressed
+    # A potential bug would be the assumption that all lines can be expressed
     # as (slope, y_intercept). This excludes vertical lines.  So, vertical
-    # lines will need their own representation: ((None, None) x_intercept).
+    # lines will need their own representation: ((None, None), x_intercept).
     if dx == 0:
         return None, None
     else:
